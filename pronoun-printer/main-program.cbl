@@ -15,4 +15,4 @@
 
            CALL 'pronoun-writer' USING WS-NAME WS-PRONOUN-NOM 
            WS-PRONOUN-OBJ.
-           
+
