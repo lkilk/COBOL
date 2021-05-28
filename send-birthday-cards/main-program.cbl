@@ -14,4 +14,4 @@
            
 
 
-           CALL'customer-filterer' USING WS-DATE.
+           CALL'customer-filterer' USING "04-06" "2021".
