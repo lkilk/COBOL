@@ -41,13 +41,14 @@
                05 LS-DASH PIC X.
                05 LS-DAY PIC 99.
            01 LS-YEAR PIC 9999.
-       PROCEDURE DIVISION USING LS-DATE LS-YEAR.
-           
+       PROCEDURE DIVISION USING LS-DATE LS-YEAR. 
+
            IF LS-DATE = "04-06"
                PERFORM TAX-DAY
            END-IF.
          
            PERFORM BIRTHDAY.
+           GOBACK.
 
            TAX-DAY SECTION.
            MOVE 0 TO WS-FILE-IS-ENDED.
@@ -56,8 +57,9 @@
            PERFORM UNTIL WS-FILE-IS-ENDED = 1
                READ F-CUSTOMER-FILE
                    NOT AT END
-                   IF LS-YEAR - RC-DOB-YEAR >= 18 AND 
-                   RC-DOB-MONTH >= LS-MONTH AND RC-DOB-DAY >= LS-DAY
+                   IF (LS-YEAR - RC-DOB-YEAR > 18) OR 
+                   (LS-YEAR - RC-DOB-YEAR = 18 AND 
+                   RC-DOB-MONTH >= LS-MONTH AND RC-DOB-DAY >= LS-DAY)
                        MOVE RC-CUSTOMER-NAME TO RC-TAX-NAME
                        MOVE RC-CUSTOMER-ADDRESS TO RC-TAX-ADDRESS
                        STRING 'Happy Tax Day, ' RC-TAX-NAME INTO 
