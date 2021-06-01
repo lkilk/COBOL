@@ -1,6 +1,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. customer-filterer.
        ENVIRONMENT DIVISION.
+           CONFIGURATION SECTION.
+           REPOSITORY. 
+           FUNCTION IS-LEAP-YEAR.
+           
            INPUT-OUTPUT SECTION.
            FILE-CONTROL.
                SELECT F-CUSTOMER-FILE ASSIGN TO 'customers.dat' 
@@ -8,7 +12,8 @@
                SELECT F-CARDS-FILE ASSIGN TO 'cards.dat'
                    ORGANISATION IS LINE SEQUENTIAL.
                SELECT F-TAX-FILE ASSIGN TO 'cards-tax-day.dat'
-                   ORGANISATION IS LINE SEQUENTIAL.
+                   ORGANISATION IS LINE SEQUENTIAL. 
+           
        DATA DIVISION.
            FILE SECTION.
            FD F-CUSTOMER-FILE.
@@ -42,11 +47,11 @@
                05 LS-DAY PIC 99.
            01 LS-YEAR PIC 9999.
        PROCEDURE DIVISION USING LS-DATE LS-YEAR. 
-
+ 
            IF LS-DATE = "04-06"
                PERFORM TAX-DAY
            END-IF.
-         
+
            PERFORM BIRTHDAY.
            GOBACK.
 
@@ -83,6 +88,10 @@
            PERFORM UNTIL WS-FILE-IS-ENDED = 1
                READ F-CUSTOMER-FILE
                    NOT AT END
+                   IF IS-LEAP-YEAR(LS-YEAR) = "FALSE" 
+                   AND RC-DOB-MMDD = "02-29"
+                       MOVE "03-01" TO RC-DOB-MMDD
+                   END-IF
                    IF RC-DOB-MMDD = LS-DATE
                        MOVE RC-CUSTOMER-NAME TO RC-CARD-NAME
                        MOVE RC-CUSTOMER-ADDRESS TO RC-CARD-ADDRESS

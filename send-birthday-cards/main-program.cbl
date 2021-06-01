@@ -1,5 +1,9 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. main-program.
+       ENVIRONMENT DIVISION.
+           CONFIGURATION SECTION.
+           REPOSITORY. 
+           FUNCTION IS-LEAP-YEAR.
        DATA DIVISION.
            WORKING-STORAGE SECTION.
            01 WS-DATE PIC X(5).
@@ -15,4 +19,13 @@
            
            MOVE FUNCTION CURRENT-DATE(1:4) TO WS-YEAR.
 
-           CALL'customer-filterer' USING "04-06" "2021".
+           MOVE '03-01' TO WS-DATE.
+           MOVE '2022' TO WS-YEAR.
+
+        *>    IF IS-LEAP-YEAR(WS-YEAR) = "FALSE" AND WS-DATE = "03-01"
+        *>    CALL 'customer-filterer' USING "02-29" WS-YEAR
+        *>    END-IF. 
+
+
+           CALL'customer-filterer' USING WS-DATE WS-YEAR.
+           
