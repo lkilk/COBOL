@@ -11,8 +11,10 @@
            SET ENVIRONMENT "cards_dat" TO "cards-tax-day.dat".
            CALL 'customer-filterer' USING "04-06" "2021".
            
-
+           SET ENVIRONMENT "cards_dat" TO "cards-leapyear-0301.dat".
+           CALL 'customer-filterer' USING "03-01" "2022".
            
-           
+           SET ENVIRONMENT "cards_dat" TO "cards-leapyear-0229.dat".
+           CALL 'customer-filterer' USING "02-29" "2024".
            
            
