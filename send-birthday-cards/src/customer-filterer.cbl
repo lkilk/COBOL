@@ -3,8 +3,10 @@
        ENVIRONMENT DIVISION.
            CONFIGURATION SECTION.
            REPOSITORY. 
-           FUNCTION IS-LEAP-YEAR.
-           
+           FUNCTION IS-LEAP-YEAR
+           FUNCTION IS-SUPERMOON
+           FUNCTION IS-WEREWOLF.
+
            INPUT-OUTPUT SECTION.
            FILE-CONTROL.
                SELECT F-CUSTOMER-FILE ASSIGN TO 'customers.dat' 
@@ -13,7 +15,8 @@
                    ORGANISATION IS LINE SEQUENTIAL.
                SELECT F-TAX-FILE ASSIGN TO 'cards-tax-day.dat'
                    ORGANISATION IS LINE SEQUENTIAL. 
-           
+               SELECT F-WEREWOLF-FILE ASSIGN TO 'werewolfs.dat'
+                   ORGANISATION IS LINE SEQUENTIAL.
        DATA DIVISION.
            FILE SECTION.
            FD F-CUSTOMER-FILE.
@@ -38,15 +41,29 @@
                05 RC-TAX-NAME PIC X(40).
                05 RC-TAX-ADDRESS PIC X(100).
                05 RC-TAX-MESSAGE PIC X(56).
+           FD F-WEREWOLF-FILE.
+           01 WEREWOLF-CARD.
+               05 WEREWOLF-NAME PIC X(40).
+               05 WEREWOLF-ADDRESS PIC X(100).
+               05 WEREWOLF-GREETING PIC X(56).
            WORKING-STORAGE SECTION.
-           01 WS-FILE-IS-ENDED PIC 9.          
+           01 WS-FILE-IS-ENDED PIC 9.  
+           01 WS-TODAYS-DATE PIC X(10).        
            LINKAGE SECTION.
            01 LS-DATE.
                05 LS-MONTH PIC 99.
                05 LS-DASH PIC X.
                05 LS-DAY PIC 99.
            01 LS-YEAR PIC 9999.
-       PROCEDURE DIVISION USING LS-DATE LS-YEAR. 
+       PROCEDURE DIVISION USING LS-DATE LS-YEAR.
+
+           STRING LS-YEAR "-" LS-DATE INTO WS-TODAYS-DATE
+           END-STRING.
+           
+           DISPLAY WS-TODAYS-DATE.
+           IF IS-SUPERMOON(WS-TODAYS-DATE) = 'TRUE'
+               PERFORM WEREWOLF
+           END-IF.
  
            IF LS-DATE = "04-06"
                PERFORM TAX-DAY
@@ -105,8 +122,29 @@
                    MOVE 1 TO WS-FILE-IS-ENDED 
                END-READ 
            END-PERFORM.
-           
            CLOSE F-CARDS-FILE.
+           CLOSE F-CUSTOMER-FILE.
+
+           WEREWOLF SECTION. 
+           DISPLAY 'PERFORMING WEREWOLF'.
+           MOVE 0 TO WS-FILE-IS-ENDED.
+           OPEN INPUT F-CUSTOMER-FILE.
+           OPEN EXTEND F-WEREWOLF-FILE.
+           PERFORM UNTIL WS-FILE-IS-ENDED = 1 
+               READ F-CUSTOMER-FILE
+                   NOT AT END
+                   IF IS-WEREWOLF(RC-CUSTOMER-DOB) = 'TRUE' 
+                       MOVE RC-CUSTOMER-NAME TO WEREWOLF-NAME
+                       MOVE RC-CUSTOMER-ADDRESS TO WEREWOLF-ADDRESS
+                       MOVE 'Awoo!' TO WEREWOLF-GREETING
+                       WRITE WEREWOLF-CARD
+                       END-WRITE 
+                   END-IF 
+                   AT END 
+                   MOVE 1 TO WS-FILE-IS-ENDED 
+               END-READ 
+           END-PERFORM.
+           CLOSE F-WEREWOLF-FILE.
            CLOSE F-CUSTOMER-FILE.
 
 

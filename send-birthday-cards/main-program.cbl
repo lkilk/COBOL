@@ -19,8 +19,8 @@
            
            MOVE FUNCTION CURRENT-DATE(1:4) TO WS-YEAR.
 
-           MOVE '03-01' TO WS-DATE.
-           MOVE '2022' TO WS-YEAR.
+           MOVE '04-11' TO WS-DATE.
+           MOVE '1922' TO WS-YEAR.
 
         *>    IF IS-LEAP-YEAR(WS-YEAR) = "FALSE" AND WS-DATE = "03-01"
         *>    CALL 'customer-filterer' USING "02-29" WS-YEAR
