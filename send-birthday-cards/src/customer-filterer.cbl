@@ -17,6 +17,9 @@
                    ORGANISATION IS LINE SEQUENTIAL. 
                SELECT F-WEREWOLF-FILE ASSIGN TO 'werewolfs.dat'
                    ORGANISATION IS LINE SEQUENTIAL.
+               SELECT F-SUPERMOON-FILE ASSIGN TO 'supermoons.dat'
+                   ORGANISATION IS LINE SEQUENTIAL.
+
        DATA DIVISION.
            FILE SECTION.
            FD F-CUSTOMER-FILE.
@@ -46,9 +49,17 @@
                05 WEREWOLF-NAME PIC X(40).
                05 WEREWOLF-ADDRESS PIC X(100).
                05 WEREWOLF-GREETING PIC X(56).
+           FD F-SUPERMOON-FILE.
+           01 SMOON-DATE PIC X(10).
+           01 SMOON-APP-MAG PIC X(7). 
            WORKING-STORAGE SECTION.
            01 WS-FILE-IS-ENDED PIC 9.  
-           01 WS-TODAYS-DATE PIC X(10).        
+           01 WS-TODAYS-DATE PIC X(10).
+           01 WS-SUPERMOONS.
+               05 WS-SUPERMOON OCCURS 661 TIMES 
+               ASCENDING KEY IS WS-SMOON
+               INDEXED BY SMOON-IDX.
+                   10 WS-SMOON PIC X(10).        
            LINKAGE SECTION.
            01 LS-DATE.
                05 LS-MONTH PIC 99.
@@ -57,13 +68,27 @@
            01 LS-YEAR PIC 9999.
        PROCEDURE DIVISION USING LS-DATE LS-YEAR.
 
+           SET SMOON-IDX TO 0.
+           MOVE 0 TO WS-FILE-IS-ENDED.
+           OPEN INPUT F-SUPERMOON-FILE.
+           PERFORM UNTIL WS-FILE-IS-ENDED = 1
+               READ F-SUPERMOON-FILE
+                   NOT AT END
+                       ADD 1 TO SMOON-IDX
+                       MOVE SMOON-DATE TO WS-SUPERMOON(SMOON-IDX)
+                   AT END 
+                       MOVE 1 TO WS-FILE-IS-ENDED 
+               END-READ 
+           END-PERFORM.
+           CLOSE F-SUPERMOON-FILE.
+
            STRING LS-YEAR "-" LS-DATE INTO WS-TODAYS-DATE
            END-STRING.
 
-           DISPLAY WS-TODAYS-DATE.
-           IF IS-SUPERMOON(WS-TODAYS-DATE) = 'TRUE'
-               PERFORM WEREWOLF
-           END-IF.
+           SEARCH ALL WS-SUPERMOON
+               WHEN WS-SMOON(SMOON-IDX) = WS-TODAYS-DATE 
+                   PERFORM WEREWOLF
+           END-SEARCH. 
  
            IF LS-DATE = "04-06"
                PERFORM TAX-DAY
@@ -132,13 +157,14 @@
            PERFORM UNTIL WS-FILE-IS-ENDED = 1 
                READ F-CUSTOMER-FILE
                    NOT AT END
-                   IF IS-WEREWOLF(RC-CUSTOMER-DOB) = 'TRUE' 
+                   SEARCH ALL WS-SUPERMOON
+                       WHEN WS-SMOON(SMOON-IDX) = RC-CUSTOMER-DOB 
                        MOVE RC-CUSTOMER-NAME TO WEREWOLF-NAME
                        MOVE RC-CUSTOMER-ADDRESS TO WEREWOLF-ADDRESS
                        MOVE 'Awoo!' TO WEREWOLF-GREETING
                        WRITE WEREWOLF-CARD
                        END-WRITE 
-                   END-IF 
+                   END-SEARCH 
                    AT END 
                    MOVE 1 TO WS-FILE-IS-ENDED 
                END-READ 
