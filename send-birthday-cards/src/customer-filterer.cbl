@@ -59,7 +59,7 @@
 
            STRING LS-YEAR "-" LS-DATE INTO WS-TODAYS-DATE
            END-STRING.
-           
+
            DISPLAY WS-TODAYS-DATE.
            IF IS-SUPERMOON(WS-TODAYS-DATE) = 'TRUE'
                PERFORM WEREWOLF
@@ -126,7 +126,6 @@
            CLOSE F-CUSTOMER-FILE.
 
            WEREWOLF SECTION. 
-           DISPLAY 'PERFORMING WEREWOLF'.
            MOVE 0 TO WS-FILE-IS-ENDED.
            OPEN INPUT F-CUSTOMER-FILE.
            OPEN EXTEND F-WEREWOLF-FILE.

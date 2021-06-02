@@ -43,21 +43,5 @@
                    MOVE 'TRUE' TO LS-RESULT
            END-SEARCH. 
 
-        *>    MOVE 0 TO WS-FILE-IS-ENDED.
-        *>    OPEN INPUT F-SUPERMOON-FILE.
-        *>    PERFORM UNTIL WS-FILE-IS-ENDED = 1
-        *>        READ F-SUPERMOON-FILE
-        *>            NOT AT END
-        *>            IF SMOON-DATE = LS-DATE
-        *>                MOVE 'TRUE' TO LS-RESULT
-        *>            END-IF
-        *>            AT END 
-        *>            MOVE 1 TO WS-FILE-IS-ENDED 
-        *>        END-READ 
-        *>    END-PERFORM.
-        *>    CLOSE F-SUPERMOON-FILE.
-
-           
-           
-           DISPLAY LS-RESULT.
            END FUNCTION IS-SUPERMOON. 
+           
