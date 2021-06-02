@@ -17,4 +17,6 @@
            SET ENVIRONMENT "cards_dat" TO "cards-leapyear-0229.dat".
            CALL 'customer-filterer' USING "02-29" "2024".
            
+           SET ENVIRONMENT "cards_dat" TO "werewolfs.dat".
+           CALL "customer-filterer" USING "12-17", "1937". 
            
